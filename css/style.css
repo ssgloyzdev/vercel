@@ -74,16 +74,11 @@ body {
   width: 34px;
   height: 34px;
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
   border-radius: 50%;
-  background: #f5a623;
-  color: #ffffff;
+  object-fit: cover;
+  flex-shrink: 0;
 
-  font-size: 14px;
-  font-weight: 700;
+  background: #e5e7eb;
 }
 
 .btn-login {
@@ -111,7 +106,6 @@ body {
 .avatar-sm {
   width: 28px;
   height: 28px;
-  font-size: 12px;
 }
 
 .empty-state {
