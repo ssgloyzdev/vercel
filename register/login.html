@@ -4,23 +4,23 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Daftar</title>
+  <title>Login</title>
 
-  <link rel="stylesheet" href="../css/register.css">
+  <link rel="stylesheet" href="../css/login.css">
 </head>
 
 <body>
 
-  <main class="register-container">
+  <main class="login-container">
 
-    <div class="register-card">
+    <div class="login-card">
 
-      <div class="register-header">
-        <h1>Buat Akun</h1>
-        <p>Daftar untuk melanjutkan</p>
+      <div class="login-header">
+        <h1>Welcome Back</h1>
+        <p>Login ke akun kamu</p>
       </div>
 
-      <form id="registerForm">
+      <form id="loginForm">
 
         <div class="form-group">
           <label for="email">Email</label>
@@ -40,22 +40,8 @@
           <input
             type="password"
             id="password"
-            placeholder="Minimal 6 karakter"
-            autocomplete="new-password"
-            minlength="6"
-            required
-          >
-        </div>
-
-        <div class="form-group">
-          <label for="confirmPassword">Konfirmasi Password</label>
-
-          <input
-            type="password"
-            id="confirmPassword"
-            placeholder="Masukkan password lagi"
-            autocomplete="new-password"
-            minlength="6"
+            placeholder="••••••••"
+            autocomplete="current-password"
             required
           >
         </div>
@@ -63,9 +49,9 @@
         <button
           type="submit"
           class="btn btn-primary"
-          id="registerButton"
+          id="loginButton"
         >
-          Daftar
+          Login
         </button>
 
       </form>
@@ -82,7 +68,7 @@
           id="googleButton"
         >
           <span>G</span>
-          Daftar dengan Google
+          Continue with Google
         </button>
 
         <button
@@ -91,23 +77,23 @@
           id="githubButton"
         >
           <span>◆</span>
-          Daftar dengan GitHub
+          Continue with GitHub
         </button>
 
       </div>
 
       <p id="message" class="message"></p>
 
-      <p class="login-text">
-        Sudah punya akun?
-        <a href="./login.html">Login</a>
+      <p class="register-text">
+        Belum punya akun?
+        <a href="./register.html">Daftar</a>
       </p>
 
     </div>
 
   </main>
 
-  <script type="module" src="../js/register.js"></script>
+  <script type="module" src="../js/login.js"></script>
 
 </body>
 </html>
