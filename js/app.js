@@ -1,4 +1,4 @@
-import { getSession, onAuthStateChange } from "./auth.js";
+import { getSession, onAuthStateChange, getUserRole } from "./auth.js";
 
 const LOGIN_URL = "register/login.html";
 
@@ -42,10 +42,12 @@ document.querySelectorAll(".toggle").forEach((toggle) => {
   });
 });
 
-function renderAuthState(session) {
+async function renderAuthState(session) {
   loginButton.hidden = !!session;
   userChip.hidden = !session;
-  adminSection.hidden = !session;
+
+  const role = session ? await getUserRole(session.user.email) : "user";
+  adminSection.hidden = role !== "admin";
 
   accountItem.onclick = () => requireAuth(session, () => {});
   commentsItem.onclick = () => requireAuth(session, () => {});
@@ -54,10 +56,10 @@ function renderAuthState(session) {
 async function initAuthState() {
   try {
     const session = await getSession();
-    renderAuthState(session);
+    await renderAuthState(session);
   } catch (error) {
     console.error("Session check error:", error);
-    renderAuthState(null);
+    await renderAuthState(null);
   }
 }
 
