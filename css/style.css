@@ -1,1 +1,313 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
+body {
+  min-height: 100vh;
+
+  font-family:
+    Inter,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+
+  background: #f5f7fb;
+  color: #111827;
+
+  overflow-x: hidden;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 16px 20px;
+
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.icon-btn[hidden],
+.btn-login[hidden],
+.user-chip[hidden],
+.drawer-section[hidden] {
+  display: none;
+}
+
+.icon-btn {
+  width: 40px;
+  height: 40px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  background: #ffffff;
+
+  font-size: 16px;
+  cursor: pointer;
+
+  transition: background 0.15s;
+}
+
+.icon-btn:hover {
+  background: #f3f4f6;
+}
+
+.user-chip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.avatar {
+  width: 34px;
+  height: 34px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+  background: #f5a623;
+  color: #ffffff;
+
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.btn-login {
+  height: 40px;
+
+  padding: 0 18px;
+
+  border: none;
+  border-radius: 10px;
+  background: #4f46e5;
+  color: #ffffff;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: background 0.15s;
+}
+
+.btn-login:hover {
+  background: #4338ca;
+}
+
+.avatar-sm {
+  width: 28px;
+  height: 28px;
+  font-size: 12px;
+}
+
+.empty-state {
+  min-height: calc(100vh - 68px);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+  padding: 24px;
+}
+
+.empty-state h1 {
+  font-size: 22px;
+  font-weight: 700;
+
+  max-width: 320px;
+  margin-bottom: 8px;
+}
+
+.empty-state p {
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+
+  background: rgba(17, 24, 39, 0.4);
+
+  opacity: 0;
+  pointer-events: none;
+
+  transition: opacity 0.2s;
+
+  z-index: 10;
+}
+
+.overlay.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.drawer {
+  position: fixed;
+  top: 0;
+  left: 0;
+
+  width: min(300px, 84vw);
+  height: 100vh;
+
+  background: #ffffff;
+
+  box-shadow: 20px 0 50px rgba(0, 0, 0, 0.08);
+
+  transform: translateX(-100%);
+  transition: transform 0.25s ease;
+
+  z-index: 20;
+
+  display: flex;
+  flex-direction: column;
+
+  padding: 20px;
+}
+
+.drawer.is-open {
+  transform: translateX(0);
+}
+
+.drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 20px;
+}
+
+.drawer-header h2 {
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.drawer-nav {
+  display: flex;
+  flex-direction: column;
+
+  gap: 4px;
+
+  margin-bottom: 20px;
+}
+
+.drawer-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  padding: 10px 8px;
+
+  border: none;
+  border-radius: 10px;
+  background: none;
+
+  font-size: 15px;
+  color: #111827;
+  text-align: left;
+
+  cursor: pointer;
+
+  transition: background 0.15s;
+}
+
+.drawer-item:hover {
+  background: #f3f4f6;
+}
+
+.icon-box {
+  width: 28px;
+  height: 28px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 8px;
+  background: #f3f4f6;
+
+  font-size: 14px;
+}
+
+.drawer-section {
+  border-top: 1px solid #e5e7eb;
+  padding-top: 16px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.drawer-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #9ca3af;
+}
+
+.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  font-size: 14px;
+}
+
+.toggle {
+  width: 42px;
+  height: 24px;
+
+  border: none;
+  border-radius: 999px;
+  background: #d1d5db;
+
+  position: relative;
+  cursor: pointer;
+
+  transition: background 0.2s;
+}
+
+.toggle::after {
+  content: "";
+
+  position: absolute;
+  top: 3px;
+  left: 3px;
+
+  width: 18px;
+  height: 18px;
+
+  border-radius: 50%;
+  background: #ffffff;
+
+  transition: transform 0.2s;
+}
+
+.toggle.is-on {
+  background: #4f46e5;
+}
+
+.toggle.is-on::after {
+  transform: translateX(18px);
+}
+
+@media (max-width: 480px) {
+  .empty-state h1 {
+    font-size: 19px;
+  }
+}
