@@ -34,7 +34,7 @@ async function loginWithProvider(provider) {
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider,
     options: {
-      redirectTo: pageUrl("../register/login.html")
+      redirectTo: pageUrl("./login.html")
     }
   });
 
@@ -79,4 +79,15 @@ export function onAuthStateChange(callback) {
   return supabase.auth.onAuthStateChange((event, session) => {
     callback(event, session);
   });
+}
+
+export async function getUserRole(email) {
+  const { data, error } = await supabase
+    .from("user_roles")
+    .select("role")
+    .eq("email", email)
+    .single();
+
+  if (error) return "user";
+  return data.role;
 }
