@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kelola Konten</title>
+  <link rel="icon" type="image/x-icon" href="../assets/favicon.ico">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/admin-repo.css">
+</head>
+<body>
+
+  <header class="topbar">
+    <button class="icon-btn" id="backButton" aria-label="Kembali">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <h1>Kelola Konten</h1>
+  </header>
+
+  <main class="admin-layout">
+    <section class="file-panel">
+      <div class="file-panel-toolbar">
+        <button class="btn-secondary" id="newFileButton">File Baru</button>
+        <button class="btn-secondary" id="newFolderButton">Folder Baru</button>
+        <button class="btn-secondary" id="deleteFolderButton">Hapus Folder</button>
+      </div>
+
+      <div class="file-list" id="fileList"></div>
+    </section>
+
+    <section class="editor-panel">
+      <div class="editor-header">
+        <span id="currentFileLabel">Belum ada file dipilih</span>
+      </div>
+
+      <textarea id="editorTextarea" spellcheck="false" placeholder="Isi file akan muncul di sini..."></textarea>
+
+      <div class="editor-actions">
+        <button class="btn-secondary" id="deleteFileButton" disabled>Hapus File</button>
+        <button class="btn-login" id="saveFileButton" disabled>Simpan</button>
+      </div>
+
+      <p class="field-hint" id="adminMessage"></p>
+    </section>
+  </main>
+
+  <script type="module" src="../js/admin-repo.js"></script>
+</body>
+</html>
