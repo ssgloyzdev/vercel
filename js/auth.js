@@ -30,6 +30,18 @@ export async function login(email, password) {
   return data;
 }
 
+export async function loginWithMagicLink(email) {
+  const { data, error } = await supabase.auth.signInWithOtp({
+    email,
+    options: {
+      emailRedirectTo: pageUrl("./login.html")
+    }
+  });
+
+  if (error) throw error;
+  return data;
+}
+
 async function loginWithProvider(provider) {
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider,
