@@ -237,3 +237,29 @@ body {
     font-size: 24px;
   }
 }
+.magic-link-text {
+  margin-top: 14px;
+
+  text-align: center;
+}
+
+.btn-link {
+  border: none;
+  background: none;
+
+  color: #4f46e5;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.btn-link:hover {
+  text-decoration: underline;
+}
+
+.btn-link:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
