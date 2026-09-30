@@ -2,6 +2,7 @@ import {
   login,
   loginWithGoogle,
   loginWithGitHub,
+  loginWithMagicLink,
   getSession
 } from "./auth.js";
 
@@ -13,6 +14,7 @@ const passwordInput = document.getElementById("password");
 const loginButton = document.getElementById("loginButton");
 const googleButton = document.getElementById("googleButton");
 const githubButton = document.getElementById("githubButton");
+const magicLinkButton = document.getElementById("magicLinkButton");
 const message = document.getElementById("message");
 
 function showMessage(text, type = "error") {
@@ -73,6 +75,26 @@ googleButton.addEventListener("click", () =>
 githubButton.addEventListener("click", () =>
   handleOAuth(githubButton, loginWithGitHub, "Login dengan GitHub gagal.")
 );
+
+magicLinkButton.addEventListener("click", async () => {
+  const email = emailInput.value.trim();
+
+  if (!email) {
+    showMessage("Isi email dulu untuk magic link.");
+    return;
+  }
+
+  try {
+    setLoading(magicLinkButton, true, "Mengirim...");
+    await loginWithMagicLink(email);
+    showMessage("Link login sudah dikirim, cek email kamu.", "success");
+  } catch (error) {
+    console.error(error);
+    showMessage(error.message || "Gagal mengirim magic link.");
+  } finally {
+    setLoading(magicLinkButton, false);
+  }
+});
 
 async function checkSession() {
   try {
