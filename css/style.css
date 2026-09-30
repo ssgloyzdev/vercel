@@ -40,6 +40,10 @@ body {
   display: none;
 }
 
+.is-hidden {
+  display: none;
+}
+
 .modal {
   position: fixed;
   top: 50%;
