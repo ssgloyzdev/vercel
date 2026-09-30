@@ -189,8 +189,8 @@ function clampWidgetPosition() {
 function expandWidget() {
   floatingWidget.classList.add("is-expanded");
   widgetPanel.hidden = false;
-  iconChat.hidden = true;
-  iconClose.hidden = false;
+  iconChat.classList.add("is-hidden");
+  iconClose.classList.remove("is-hidden");
   widgetToggle.setAttribute("aria-label", "Tutup komentar");
   clampWidgetPosition();
   loadComments();
@@ -199,8 +199,8 @@ function expandWidget() {
 function collapseWidget() {
   floatingWidget.classList.remove("is-expanded");
   widgetPanel.hidden = true;
-  iconChat.hidden = false;
-  iconClose.hidden = true;
+  iconChat.classList.remove("is-hidden");
+  iconClose.classList.add("is-hidden");
   widgetToggle.setAttribute("aria-label", "Buka komentar");
 }
 
