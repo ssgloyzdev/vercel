@@ -1,0 +1,146 @@
+.admin-layout {
+  display: flex;
+  flex-direction: column;
+
+  height: calc(100vh - 68px);
+}
+
+.file-panel {
+  border-bottom: 1px solid #e5e7eb;
+
+  max-height: 40vh;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.file-panel-toolbar {
+  display: flex;
+  gap: 8px;
+
+  padding: 12px 16px;
+
+  flex-wrap: wrap;
+}
+
+.file-panel-toolbar .btn-secondary {
+  padding: 0 14px;
+  height: 36px;
+  font-size: 13px;
+}
+
+.file-list {
+  overflow-y: auto;
+
+  padding: 0 16px 12px;
+}
+
+.file-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 8px 0;
+
+  border-bottom: 1px solid #f3f4f6;
+
+  font-size: 13px;
+}
+
+.file-row button.file-path {
+  flex: 1;
+
+  text-align: left;
+
+  border: none;
+  background: none;
+
+  font-size: 13px;
+  color: #111827;
+
+  cursor: pointer;
+
+  word-break: break-all;
+}
+
+.file-row button.file-path:hover {
+  color: #4f46e5;
+}
+
+.file-row .file-delete {
+  width: 28px;
+  height: 28px;
+
+  flex-shrink: 0;
+
+  border: none;
+  background: none;
+  color: #dc2626;
+
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.editor-panel {
+  flex: 1;
+
+  display: flex;
+  flex-direction: column;
+
+  padding: 16px;
+
+  min-height: 0;
+}
+
+.editor-header {
+  font-size: 13px;
+  font-weight: 600;
+  color: #6b7280;
+
+  margin-bottom: 8px;
+
+  word-break: break-all;
+}
+
+#editorTextarea {
+  flex: 1;
+
+  width: 100%;
+
+  padding: 12px;
+
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+
+  font-family: "Courier New", monospace;
+  font-size: 13px;
+  line-height: 1.5;
+
+  resize: none;
+}
+
+#editorTextarea:focus {
+  outline: none;
+  border-color: #4f46e5;
+}
+
+.editor-actions {
+  display: flex;
+  gap: 10px;
+
+  margin-top: 12px;
+}
+
+.editor-actions .btn-secondary,
+.editor-actions .btn-login {
+  flex: 1;
+  height: 42px;
+}
+
+.editor-actions button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
