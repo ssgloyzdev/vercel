@@ -35,8 +35,130 @@ body {
 .icon-btn[hidden],
 .btn-login[hidden],
 .user-chip[hidden],
-.drawer-section[hidden] {
+.drawer-section[hidden],
+.modal[hidden] {
   display: none;
+}
+
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  width: min(340px, 88vw);
+
+  background: #ffffff;
+  border-radius: 16px;
+
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+
+  z-index: 30;
+
+  padding: 20px;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 16px;
+}
+
+.modal-header h2 {
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.modal-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  gap: 10px;
+}
+
+.avatar-lg {
+  width: 72px;
+  height: 72px;
+}
+
+.account-email {
+  font-size: 14px;
+  color: #6b7280;
+
+  margin-bottom: 6px;
+}
+
+.field-label {
+  align-self: flex-start;
+
+  font-size: 13px;
+  font-weight: 600;
+}
+
+#avatarUrlInput {
+  width: 100%;
+
+  height: 42px;
+  padding: 0 12px;
+
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+
+  font-size: 14px;
+}
+
+#avatarUrlInput:focus {
+  outline: none;
+  border-color: #4f46e5;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 10px;
+
+  width: 100%;
+  margin-top: 6px;
+}
+
+.modal-actions .btn-login,
+.modal-actions .btn-secondary {
+  flex: 1;
+  height: 42px;
+  padding: 0;
+}
+
+.btn-secondary {
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #111827;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: background 0.15s;
+}
+
+.btn-secondary:hover {
+  background: #f3f4f6;
+}
+
+.field-hint {
+  font-size: 13px;
+  min-height: 16px;
+}
+
+.field-hint.is-error {
+  color: #dc2626;
+}
+
+.field-hint.is-success {
+  color: #16a34a;
 }
 
 .icon-btn {
