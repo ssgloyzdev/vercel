@@ -35,9 +35,10 @@ const resetAvatarButton = document.getElementById("resetAvatarButton");
 const accountMessage = document.getElementById("accountMessage");
 
 const floatingWidget = document.getElementById("floatingWidget");
-const widgetIcon = document.getElementById("widgetIcon");
+const widgetToggle = document.getElementById("widgetToggle");
+const iconChat = document.getElementById("iconChat");
+const iconClose = document.getElementById("iconClose");
 const widgetPanel = document.getElementById("widgetPanel");
-const closeWidget = document.getElementById("closeWidget");
 const commentList = document.getElementById("commentList");
 const commentFooter = document.getElementById("commentFooter");
 const commentInput = document.getElementById("commentInput");
@@ -162,13 +163,22 @@ async function loadComments() {
   }
 }
 
-function clampWidgetPosition() {
-  const rect = floatingWidget.getBoundingClientRect();
-  const maxLeft = window.innerWidth - rect.width - 8;
-  const maxTop = window.innerHeight - rect.height - 8;
+function getExpandedSize() {
+  return {
+    width: Math.min(340, window.innerWidth * 0.9),
+    height: Math.min(480, window.innerHeight * 0.7)
+  };
+}
 
-  const left = Math.min(Math.max(rect.left, 8), Math.max(maxLeft, 8));
-  const top = Math.min(Math.max(rect.top, 8), Math.max(maxTop, 8));
+function clampWidgetPosition() {
+  const { width, height } = getExpandedSize();
+  const rect = floatingWidget.getBoundingClientRect();
+
+  const maxLeft = Math.max(window.innerWidth - width - 8, 8);
+  const maxTop = Math.max(window.innerHeight - height - 8, 8);
+
+  const left = Math.min(Math.max(rect.left, 8), maxLeft);
+  const top = Math.min(Math.max(rect.top, 8), maxTop);
 
   floatingWidget.style.left = `${left}px`;
   floatingWidget.style.top = `${top}px`;
@@ -179,6 +189,9 @@ function clampWidgetPosition() {
 function expandWidget() {
   floatingWidget.classList.add("is-expanded");
   widgetPanel.hidden = false;
+  iconChat.hidden = true;
+  iconClose.hidden = false;
+  widgetToggle.setAttribute("aria-label", "Tutup komentar");
   clampWidgetPosition();
   loadComments();
 }
@@ -186,12 +199,19 @@ function expandWidget() {
 function collapseWidget() {
   floatingWidget.classList.remove("is-expanded");
   widgetPanel.hidden = true;
+  iconChat.hidden = false;
+  iconClose.hidden = true;
+  widgetToggle.setAttribute("aria-label", "Buka komentar");
 }
 
 function toggleWidget() {
   if (floatingWidget.classList.contains("is-expanded")) collapseWidget();
   else expandWidget();
 }
+
+window.addEventListener("resize", () => {
+  if (floatingWidget.classList.contains("is-expanded")) clampWidgetPosition();
+});
 
 let isDragging = false;
 let dragMoved = false;
@@ -254,9 +274,12 @@ function onPointerUp() {
   if (!dragMoved) toggleWidget();
 }
 
-widgetIcon.addEventListener("mousedown", onPointerDown);
-widgetIcon.addEventListener("touchstart", onPointerDown, { passive: true });
-closeWidget.addEventListener("click", collapseWidget);
+widgetToggle.addEventListener("mousedown", onPointerDown);
+widgetToggle.addEventListener("touchstart", onPointerDown, { passive: true });
+
+widgetToggle.addEventListener("click", () => {
+  if (floatingWidget.classList.contains("is-expanded")) collapseWidget();
+});
 
 sendCommentButton.addEventListener("click", async () => {
   const content = commentInput.value.trim();
