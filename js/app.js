@@ -363,6 +363,13 @@ async function renderAuthState(session) {
     toggleDrawer(false);
     expandWidget();
   };
+
+  const manageContentItem = document.getElementById("manageContentItem");
+  if (manageContentItem) {
+    manageContentItem.onclick = () => {
+      window.location.href = "admin/kelola-konten.html";
+    };
+  }
 }
 
 async function initAuthState() {
