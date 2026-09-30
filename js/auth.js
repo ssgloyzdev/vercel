@@ -91,3 +91,28 @@ export async function getUserRole(email) {
   if (error) return "user";
   return data.role;
 }
+
+export function maskEmail(email) {
+  if (!email) return "";
+
+  const [local, domain] = email.split("@");
+  const visible = local.length > 2 ? local.slice(0, 2) : local.slice(0, 1);
+
+  return `${visible}***@${domain}`;
+}
+
+export function resolveAvatarUrl(user) {
+  if (!user) return null;
+
+  const metadata = user.user_metadata || {};
+  return metadata.custom_avatar_url || metadata.avatar_url || null;
+}
+
+export async function updateCustomAvatar(url) {
+  const { data, error } = await supabase.auth.updateUser({
+    data: { custom_avatar_url: url || null }
+  });
+
+  if (error) throw error;
+  return data.user;
+}
