@@ -427,3 +427,164 @@ body {
     font-size: 19px;
   }
 }
+
+.floating-widget {
+  position: fixed;
+  right: 20px;
+  bottom: 90px;
+
+  width: 56px;
+  height: 56px;
+
+  background: #4f46e5;
+  color: #ffffff;
+
+  border-radius: 50%;
+
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+
+  z-index: 40;
+
+  touch-action: none;
+  user-select: none;
+
+  transition: width 0.2s, height 0.2s, border-radius 0.2s, background 0.2s;
+}
+
+.floating-widget.is-expanded {
+  width: min(340px, 90vw);
+  height: min(480px, 70vh);
+
+  background: #ffffff;
+  color: #111827;
+
+  border-radius: 16px;
+
+  display: flex;
+  flex-direction: column;
+
+  overflow: hidden;
+}
+
+.widget-icon {
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: grab;
+}
+
+.floating-widget.is-expanded .widget-icon {
+  display: none;
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 14px 16px;
+
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.panel-header h2 {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.comment-list {
+  flex: 1;
+
+  overflow-y: auto;
+
+  padding: 12px 16px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.comment-item {
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.comment-item .comment-meta {
+  display: flex;
+  gap: 6px;
+
+  align-items: baseline;
+
+  margin-bottom: 2px;
+}
+
+.comment-item .comment-email {
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.comment-item .comment-time {
+  color: #9ca3af;
+  font-size: 11px;
+}
+
+.comment-item .comment-content {
+  color: #111827;
+
+  word-break: break-word;
+}
+
+.comment-empty {
+  color: #9ca3af;
+  font-size: 13px;
+  text-align: center;
+
+  margin-top: 20px;
+}
+
+.comment-footer {
+  display: flex;
+  gap: 8px;
+
+  padding: 12px 16px;
+
+  border-top: 1px solid #e5e7eb;
+}
+
+#commentInput {
+  flex: 1;
+
+  height: 40px;
+  padding: 0 12px;
+
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+
+  font-size: 14px;
+}
+
+#commentInput:focus {
+  outline: none;
+  border-color: #4f46e5;
+}
+
+#sendCommentButton {
+  width: 40px;
+  height: 40px;
+
+  background: #4f46e5;
+  color: #ffffff;
+  border-color: #4f46e5;
+}
+
+#sendCommentButton:hover {
+  background: #4338ca;
+}
+
+#commentLoginPrompt {
+  margin: 0 16px 16px;
+}
