@@ -52,6 +52,30 @@
     </div>
   </aside>
 
+  <div class="modal" id="accountModal" hidden>
+    <div class="modal-header">
+      <h2>Pengaturan Akun</h2>
+      <button class="icon-btn" id="closeAccountModal" aria-label="Tutup">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 5l14 14M19 5L5 19"/></svg>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <img class="avatar avatar-lg" id="accountAvatarPreview" src="assets/default-avatar.png" alt="Avatar">
+      <p class="account-email" id="accountEmail"></p>
+
+      <label class="field-label" for="avatarUrlInput">URL Foto Profil</label>
+      <input type="url" id="avatarUrlInput" placeholder="https://...">
+
+      <div class="modal-actions">
+        <button class="btn-secondary" id="resetAvatarButton">Pakai Default</button>
+        <button class="btn-login" id="saveAvatarButton">Simpan</button>
+      </div>
+
+      <p class="field-hint" id="accountMessage"></p>
+    </div>
+  </div>
+
   <header class="topbar">
     <button class="icon-btn" id="openDrawer" aria-label="Menu">
       <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
