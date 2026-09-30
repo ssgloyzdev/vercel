@@ -16,6 +16,7 @@ const openDrawer = document.getElementById("openDrawer");
 const closeDrawer = document.getElementById("closeDrawer");
 const loginButton = document.getElementById("loginButton");
 const userChip = document.getElementById("userChip");
+const userChipEmail = document.getElementById("userChipEmail");
 const userChipAvatar = userChip.querySelector(".avatar");
 const drawerAccountAvatar = document.querySelector("#accountItem .avatar");
 const adminSection = document.getElementById("adminSection");
@@ -132,6 +133,7 @@ async function renderAuthState(session) {
 
   loginButton.hidden = !!session;
   userChip.hidden = !session;
+  userChipEmail.textContent = session ? maskEmail(session.user.email) : "Pengguna";
 
   applyAvatar(session ? session.user : null);
 
