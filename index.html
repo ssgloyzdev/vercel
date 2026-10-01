@@ -58,6 +58,22 @@
     </div>
   </aside>
 
+  <div class="modal preview-modal" id="previewModal" hidden>
+    <div class="modal-header">
+      <h2 id="previewTitle">Karya</h2>
+      <div class="preview-actions">
+        <a id="previewOpenNewTab" href="#" target="_blank" rel="noopener" class="icon-btn" aria-label="Buka di tab baru">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14 21 3"/></svg>
+        </a>
+        <button class="icon-btn" id="closePreviewModal" aria-label="Tutup">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 5l14 14M19 5L5 19"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <iframe id="previewIframe" class="preview-iframe" title="Preview karya"></iframe>
+  </div>
+
   <div class="modal" id="accountModal" hidden>
     <div class="modal-header">
       <h2>Pengaturan Akun</h2>
