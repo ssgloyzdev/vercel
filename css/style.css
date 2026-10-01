@@ -279,8 +279,39 @@ body {
   display: none;
 }
 
+.preview-modal {
+  width: min(960px, 94vw);
+  height: min(80vh, 760px);
+
+  display: flex;
+  flex-direction: column;
+
+  padding: 0;
+  overflow: hidden;
+}
+
+.preview-modal .modal-header {
+  padding: 14px 16px;
+  margin-bottom: 0;
+
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.preview-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.preview-iframe {
+  flex: 1;
+
+  width: 100%;
+  border: none;
+}
+
 .work-card {
   display: block;
+  width: 100%;
 
   background: #ffffff;
   border: 1px solid #e5e7eb;
@@ -288,8 +319,10 @@ body {
 
   padding: 16px;
 
-  text-decoration: none;
+  text-align: left;
+  font: inherit;
   color: inherit;
+  cursor: pointer;
 
   transition: border-color 0.15s, box-shadow 0.15s;
 }
