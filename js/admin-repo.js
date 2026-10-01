@@ -1,4 +1,5 @@
 import { getSession, getUserRole } from "./auth.js";
+import { fetchWorks, addWork, deleteWork } from "./works.js";
 
 const HOME_URL = "../index.html";
 
@@ -12,6 +13,8 @@ const editorTextarea = document.getElementById("editorTextarea");
 const deleteFileButton = document.getElementById("deleteFileButton");
 const saveFileButton = document.getElementById("saveFileButton");
 const adminMessage = document.getElementById("adminMessage");
+const addWorkButton = document.getElementById("addWorkButton");
+const worksManageList = document.getElementById("worksManageList");
 
 let accessToken = null;
 let currentFile = null;
@@ -196,6 +199,65 @@ backButton.addEventListener("click", () => {
   window.location.href = HOME_URL;
 });
 
+async function loadWorksList() {
+  try {
+    const works = await fetchWorks();
+    worksManageList.innerHTML = "";
+
+    works.forEach((work) => {
+      const row = document.createElement("div");
+      row.className = "file-row";
+
+      row.innerHTML = `
+        <div class="work-row-info">
+          <span class="work-title"></span>
+          <span class="work-path"></span>
+        </div>
+        <button class="file-delete" aria-label="Hapus karya">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6"/></svg>
+        </button>
+      `;
+
+      row.querySelector(".work-title").textContent = work.title;
+      row.querySelector(".work-path").textContent = `/${work.path}`;
+
+      row.querySelector(".file-delete").addEventListener("click", async () => {
+        if (!window.confirm(`Hapus karya "${work.title}" dari beranda?`)) return;
+
+        try {
+          await deleteWork(work.id);
+          showMessage("Karya dihapus dari beranda.", "is-success");
+          loadWorksList();
+        } catch (error) {
+          showMessage(error.message, "is-error");
+        }
+      });
+
+      worksManageList.appendChild(row);
+    });
+  } catch (error) {
+    showMessage(error.message, "is-error");
+  }
+}
+
+addWorkButton.addEventListener("click", async () => {
+  const title = window.prompt("Judul karya:");
+  if (!title) return;
+
+  const path = window.prompt("Path karya (contoh: blog, atau blog/index.html):");
+  if (!path) return;
+
+  const description = window.prompt("Deskripsi singkat (boleh kosong):") || "";
+
+  try {
+    await addWork(title, path, description);
+    showMessage("Karya ditambahkan ke beranda.", "is-success");
+    loadWorksList();
+  } catch (error) {
+    showMessage(error.message, "is-error");
+  }
+});
+
 async function init() {
   const session = await getSession();
 
@@ -213,6 +275,7 @@ async function init() {
 
   accessToken = session.access_token;
   loadFileList();
+  loadWorksList();
 }
 
 init();
