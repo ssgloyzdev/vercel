@@ -244,7 +244,7 @@ addWorkButton.addEventListener("click", async () => {
   const title = window.prompt("Judul karya:");
   if (!title) return;
 
-  const path = window.prompt("Path karya (contoh: blog, atau blog/index.html):");
+  const path = window.prompt("URL lengkap karya (contoh: https://view-xxxx.vercel.app/blog):");
   if (!path) return;
 
   const description = window.prompt("Deskripsi singkat (boleh kosong):") || "";
