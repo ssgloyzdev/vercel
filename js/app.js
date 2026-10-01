@@ -8,6 +8,7 @@ import {
 } from "./auth.js";
 
 import { fetchComments, addComment, subscribeToComments } from "./comments.js";
+import { fetchWorks } from "./works.js";
 
 const LOGIN_URL = "register/login.html";
 const DEFAULT_AVATAR = "assets/default-avatar.png";
@@ -44,6 +45,8 @@ const commentFooter = document.getElementById("commentFooter");
 const commentInput = document.getElementById("commentInput");
 const sendCommentButton = document.getElementById("sendCommentButton");
 const commentLoginPrompt = document.getElementById("commentLoginPrompt");
+const emptyState = document.getElementById("emptyState");
+const worksGrid = document.getElementById("worksGrid");
 
 let currentSession = null;
 let commentsLoaded = false;
@@ -372,6 +375,41 @@ async function renderAuthState(session) {
   }
 }
 
+async function loadWorks() {
+  try {
+    const works = await fetchWorks();
+
+    if (works.length === 0) {
+      emptyState.hidden = false;
+      worksGrid.hidden = true;
+      return;
+    }
+
+    worksGrid.innerHTML = "";
+
+    works.forEach((work) => {
+      const card = document.createElement("a");
+      card.className = "work-card";
+      card.href = `/${work.path.replace(/^\//, "")}`;
+
+      card.innerHTML = `
+        <h3></h3>
+        <p></p>
+      `;
+
+      card.querySelector("h3").textContent = work.title;
+      card.querySelector("p").textContent = work.description || "";
+
+      worksGrid.appendChild(card);
+    });
+
+    emptyState.hidden = true;
+    worksGrid.hidden = false;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
 async function initAuthState() {
   try {
     const session = await getSession();
@@ -384,3 +422,4 @@ async function initAuthState() {
 
 onAuthStateChange((_event, session) => renderAuthState(session));
 initAuthState();
+loadWorks();
