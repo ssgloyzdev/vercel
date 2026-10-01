@@ -84,6 +84,42 @@
   justify-content: center;
 }
 
+.file-panel-toolbar h2 {
+  font-size: 13px;
+  font-weight: 700;
+
+  flex: 1;
+
+  display: flex;
+  align-items: center;
+}
+
+.works-panel {
+  border-bottom: 1px solid #e5e7eb;
+
+  max-height: 26vh;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.work-row-info {
+  flex: 1;
+
+  min-width: 0;
+}
+
+.work-row-info .work-title {
+  font-weight: 700;
+  display: block;
+}
+
+.work-row-info .work-path {
+  color: #9ca3af;
+  font-size: 12px;
+  display: block;
+}
+
 .editor-panel {
   flex: 1;
 
