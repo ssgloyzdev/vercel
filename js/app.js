@@ -47,6 +47,11 @@ const sendCommentButton = document.getElementById("sendCommentButton");
 const commentLoginPrompt = document.getElementById("commentLoginPrompt");
 const emptyState = document.getElementById("emptyState");
 const worksGrid = document.getElementById("worksGrid");
+const previewModal = document.getElementById("previewModal");
+const previewTitle = document.getElementById("previewTitle");
+const previewIframe = document.getElementById("previewIframe");
+const previewOpenNewTab = document.getElementById("previewOpenNewTab");
+const closePreviewModal = document.getElementById("closePreviewModal");
 
 let currentSession = null;
 let commentsLoaded = false;
@@ -311,6 +316,7 @@ loginButton.addEventListener("click", goToLogin);
 overlay.addEventListener("click", () => {
   toggleDrawer(false);
   toggleAccountModal(false);
+  closeWorkPreview();
 });
 
 document.querySelectorAll(".toggle").forEach((toggle) => {
@@ -375,6 +381,29 @@ async function renderAuthState(session) {
   }
 }
 
+function resolveWorkUrl(path) {
+  return /^https?:\/\//i.test(path) ? path : `/${path.replace(/^\//, "")}`;
+}
+
+function openWorkPreview(work) {
+  const url = resolveWorkUrl(work.path);
+
+  previewTitle.textContent = work.title;
+  previewOpenNewTab.href = url;
+  previewIframe.src = url;
+
+  previewModal.hidden = false;
+  overlay.classList.add("is-visible");
+}
+
+function closeWorkPreview() {
+  previewModal.hidden = true;
+  previewIframe.src = "";
+  overlay.classList.remove("is-visible");
+}
+
+closePreviewModal.addEventListener("click", closeWorkPreview);
+
 async function loadWorks() {
   try {
     const works = await fetchWorks();
@@ -388,9 +417,9 @@ async function loadWorks() {
     worksGrid.innerHTML = "";
 
     works.forEach((work) => {
-      const card = document.createElement("a");
+      const card = document.createElement("button");
+      card.type = "button";
       card.className = "work-card";
-      card.href = `/${work.path.replace(/^\//, "")}`;
 
       card.innerHTML = `
         <h3></h3>
@@ -399,6 +428,8 @@ async function loadWorks() {
 
       card.querySelector("h3").textContent = work.title;
       card.querySelector("p").textContent = work.description || "";
+
+      card.addEventListener("click", () => openWorkPreview(work));
 
       worksGrid.appendChild(card);
     });
