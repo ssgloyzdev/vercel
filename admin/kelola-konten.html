@@ -44,6 +44,28 @@
     </section>
   </main>
 
+  <script>
+    window.addEventListener("error", function (event) {
+      var box = document.getElementById("adminMessage");
+      if (!box) return;
+
+      var detail = event.target && event.target.tagName === "SCRIPT"
+        ? "Gagal memuat script: " + event.target.src
+        : event.message;
+
+      box.textContent = detail;
+      box.className = "field-hint is-error";
+    }, true);
+
+    window.addEventListener("unhandledrejection", function (event) {
+      var box = document.getElementById("adminMessage");
+      if (!box) return;
+
+      box.textContent = "Error: " + (event.reason && event.reason.message ? event.reason.message : event.reason);
+      box.className = "field-hint is-error";
+    });
+  </script>
+
   <script type="module" src="../js/admin-repo.js"></script>
 </body>
 </html>
