@@ -47,6 +47,7 @@ const sendCommentButton = document.getElementById("sendCommentButton");
 const commentLoginPrompt = document.getElementById("commentLoginPrompt");
 const emptyState = document.getElementById("emptyState");
 const worksGrid = document.getElementById("worksGrid");
+const bannerWorks = document.getElementById("bannerWorks");
 const previewModal = document.getElementById("previewModal");
 const previewTitle = document.getElementById("previewTitle");
 const previewIframe = document.getElementById("previewIframe");
@@ -404,38 +405,69 @@ function closeWorkPreview() {
 
 closePreviewModal.addEventListener("click", closeWorkPreview);
 
+function renderBanner(work) {
+  const banner = document.createElement("div");
+  banner.className = "work-banner";
+
+  banner.innerHTML = `
+    <div class="work-banner-header">
+      <h3></h3>
+      <p></p>
+    </div>
+    <iframe class="work-banner-iframe" loading="lazy"></iframe>
+  `;
+
+  banner.querySelector("h3").textContent = work.title;
+  banner.querySelector("p").textContent = work.description || "";
+
+  const iframe = banner.querySelector("iframe");
+  iframe.src = resolveWorkUrl(work.path);
+  iframe.title = work.title;
+
+  return banner;
+}
+
+function renderCard(work) {
+  const card = document.createElement("button");
+  card.type = "button";
+  card.className = "work-card";
+
+  card.innerHTML = `
+    <h3></h3>
+    <p></p>
+  `;
+
+  card.querySelector("h3").textContent = work.title;
+  card.querySelector("p").textContent = work.description || "";
+
+  card.addEventListener("click", () => openWorkPreview(work));
+
+  return card;
+}
+
 async function loadWorks() {
   try {
     const works = await fetchWorks();
 
     if (works.length === 0) {
       emptyState.hidden = false;
+      bannerWorks.hidden = true;
       worksGrid.hidden = true;
       return;
     }
 
+    const bannerItems = works.filter((work) => work.display_mode === "banner");
+    const clickItems = works.filter((work) => work.display_mode !== "banner");
+
+    bannerWorks.innerHTML = "";
+    bannerItems.forEach((work) => bannerWorks.appendChild(renderBanner(work)));
+
     worksGrid.innerHTML = "";
-
-    works.forEach((work) => {
-      const card = document.createElement("button");
-      card.type = "button";
-      card.className = "work-card";
-
-      card.innerHTML = `
-        <h3></h3>
-        <p></p>
-      `;
-
-      card.querySelector("h3").textContent = work.title;
-      card.querySelector("p").textContent = work.description || "";
-
-      card.addEventListener("click", () => openWorkPreview(work));
-
-      worksGrid.appendChild(card);
-    });
+    clickItems.forEach((work) => worksGrid.appendChild(renderCard(work)));
 
     emptyState.hidden = true;
-    worksGrid.hidden = false;
+    bannerWorks.hidden = bannerItems.length === 0;
+    worksGrid.hidden = clickItems.length === 0;
   } catch (error) {
     console.error(error);
   }
