@@ -393,6 +393,9 @@ function openWorkPreview(work) {
   previewOpenNewTab.href = url;
   previewIframe.src = url;
 
+  previewModal.style.width = work.iframe_width || "";
+  previewModal.style.height = work.iframe_height || "";
+
   previewModal.hidden = false;
   overlay.classList.add("is-visible");
 }
@@ -400,6 +403,8 @@ function openWorkPreview(work) {
 function closeWorkPreview() {
   previewModal.hidden = true;
   previewIframe.src = "";
+  previewModal.style.width = "";
+  previewModal.style.height = "";
   overlay.classList.remove("is-visible");
 }
 
@@ -423,6 +428,12 @@ function renderBanner(work) {
   const iframe = banner.querySelector("iframe");
   iframe.src = resolveWorkUrl(work.path);
   iframe.title = work.title;
+
+  if (work.iframe_width) {
+    iframe.style.width = work.iframe_width;
+    banner.style.maxWidth = work.iframe_width;
+  }
+  if (work.iframe_height) iframe.style.height = work.iframe_height;
 
   return banner;
 }
