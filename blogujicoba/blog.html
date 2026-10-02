@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interactive Dashboard</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: #f4f6fb;
+      color: #222;
+      transition: 0.3s;
+    }
+
+    body.dark {
+      background: #111827;
+      color: white;
+    }
+
+    .app {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      width: 240px;
+      background: #ffffff;
+      padding: 25px 15px;
+      border-right: 1px solid #ddd;
+    }
+
+    .dark .sidebar {
+      background: #1f2937;
+      border-color: #374151;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 35px;
+      padding-left: 10px;
+    }
+
+    .menu button {
+      width: 100%;
+      padding: 13px;
+      margin-bottom: 8px;
+      border: none;
+      border-radius: 10px;
+      background: transparent;
+      text-align: left;
+      cursor: pointer;
+      font-size: 15px;
+      color: inherit;
+      transition: 0.2s;
+    }
+
+    .menu button:hover,
+    .menu button.active {
+      background: #6366f1;
+      color: white;
+    }
+
+    .main {
+      flex: 1;
+      padding: 30px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+
+    .topbar h1 {
+      font-size: 30px;
+    }
+
+    .theme-btn {
+      border: none;
+      background: #6366f1;
+      color: white;
+      padding: 11px 16px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .card {
+      background: white;
+      padding: 25px;
+      border-radius: 18px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.06);
+      transition: 0.3s;
+    }
+
+    .dark .card {
+      background: #1f2937;
+      box-shadow: none;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+    }
+
+    .card h3 {
+      color: #777;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+
+    .dark .card h3 {
+      color: #9ca3af;
+    }
+
+    .number {
+      font-size: 35px;
+      font-weight: bold;
+    }
+
+    .content {
+      margin-top: 25px;
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 20px;
+    }
+
+    .panel {
+      background: white;
+      padding: 25px;
+      border-radius: 18px;
+    }
+
+    .dark .panel {
+      background: #1f2937;
+    }
+
+    .progress {
+      width: 100%;
+      height: 12px;
+      background: #e5e7eb;
+      border-radius: 20px;
+      overflow: hidden;
+      margin-top: 15px;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 65%;
+      background: #6366f1;
+      transition: 0.5s;
+    }
+
+    .counter {
+      text-align: center;
+    }
+
+    .counter-number {
+      font-size: 50px;
+      margin: 20px;
+      font-weight: bold;
+    }
+
+    .counter button {
+      border: none;
+      padding: 10px 16px;
+      margin: 4px;
+      border-radius: 9px;
+      cursor: pointer;
+      background: #6366f1;
+      color: white;
+    }
+
+    @media (max-width: 800px) {
+      .sidebar {
+        display: none;
+      }
+
+      .main {
+        padding: 20px;
+      }
+
+      .cards,
+      .content {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="app">
+
+    <aside class="sidebar">
+      <div class="logo">⚡ MyUI</div>
+
+      <div class="menu">
+        <button class="active">🏠 Dashboard</button>
+        <button>📊 Analytics</button>
+        <button>💬 Messages</button>
+        <button>⚙️ Settings</button>
+      </div>
+    </aside>
+
+    <main class="main">
+
+      <div class="topbar">
+        <div>
+          <h1>Dashboard</h1>
+          <p>Selamat datang kembali 👋</p>
+        </div>
+
+        <button class="theme-btn" onclick="toggleTheme()">
+          🌙 Mode
+        </button>
+      </div>
+
+      <section class="cards">
+
+        <div class="card">
+          <h3>Total Users</h3>
+          <div class="number" id="users">1,248</div>
+        </div>
+
+        <div class="card">
+          <h3>Revenue</h3>
+          <div class="number">Rp 8.4M</div>
+        </div>
+
+        <div class="card">
+          <h3>Growth</h3>
+          <div class="number">+24%</div>
+        </div>
+
+      </section>
+
+      <section class="content">
+
+        <div class="panel">
+          <h2>Project Progress</h2>
+          <p style="margin-top:10px;">Website development</p>
+
+          <div class="progress">
+            <div class="progress-bar" id="progressBar"></div>
+          </div>
+
+          <button
+            onclick="increaseProgress()"
+            style="
+              margin-top:20px;
+              padding:10px 15px;
+              border:none;
+              border-radius:9px;
+              background:#6366f1;
+              color:white;
+              cursor:pointer;
+            ">
+            + Tambah Progress
+          </button>
+        </div>
+
+        <div class="panel counter">
+          <h2>Counter</h2>
+
+          <div class="counter-number" id="count">
+            0
+          </div>
+
+          <button onclick="changeCount(-1)">−</button>
+          <button onclick="changeCount(1)">+</button>
+          <button onclick="resetCount()">Reset</button>
+        </div>
+
+      </section>
+
+    </main>
+  </div>
+
+  <script>
+    let count = 0;
+    let progress = 65;
+
+    function changeCount(value) {
+      count += value;
+      document.getElementById("count").textContent = count;
+    }
+
+    function resetCount() {
+      count = 0;
+      document.getElementById("count").textContent = count;
+    }
+
+    function toggleTheme() {
+      document.body.classList.toggle("dark");
+    }
+
+    function increaseProgress() {
+      progress += 5;
+
+      if (progress > 100) {
+        progress = 0;
+      }
+
+      document.getElementById("progressBar").style.width =
+        progress + "%";
+    }
+  </script>
+
+</body>
+</html>
