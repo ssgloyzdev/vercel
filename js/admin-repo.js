@@ -6,7 +6,7 @@ const HOME_URL = "../index.html";
 const backButton = document.getElementById("backButton");
 const newFileButton = document.getElementById("newFileButton");
 const newFolderButton = document.getElementById("newFolderButton");
-const deleteFolderButton = document.getElementById("deleteFolderButton");
+const breadcrumb = document.getElementById("breadcrumb");
 const fileList = document.getElementById("fileList");
 const currentFileLabel = document.getElementById("currentFileLabel");
 const editorTextarea = document.getElementById("editorTextarea");
@@ -18,6 +18,8 @@ const worksManageList = document.getElementById("worksManageList");
 
 let accessToken = null;
 let currentFile = null;
+let currentPath = "";
+let allFiles = [];
 
 function showMessage(text, type) {
   adminMessage.textContent = text;
@@ -55,22 +57,131 @@ function setCurrentFile(path, sha) {
   deleteFileButton.disabled = !(path && sha);
 }
 
-function renderFileList(files) {
+const folderIconSvg =
+  '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>';
+
+const fileIconSvg =
+  '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>';
+
+const trashIconSvg =
+  '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6"/></svg>';
+
+function renderBreadcrumb() {
+  breadcrumb.innerHTML = "";
+
+  const rootButton = document.createElement("button");
+  rootButton.textContent = "root";
+  rootButton.addEventListener("click", () => {
+    currentPath = "";
+    renderFileBrowser();
+  });
+  breadcrumb.appendChild(rootButton);
+
+  if (!currentPath) return;
+
+  const segments = currentPath.split("/");
+  let builtPath = "";
+
+  segments.forEach((segment, index) => {
+    builtPath = builtPath ? `${builtPath}/${segment}` : segment;
+
+    const separator = document.createElement("span");
+    separator.className = "separator";
+    separator.textContent = "/";
+    breadcrumb.appendChild(separator);
+
+    if (index === segments.length - 1) {
+      const current = document.createElement("span");
+      current.className = "current";
+      current.textContent = segment;
+      breadcrumb.appendChild(current);
+      return;
+    }
+
+    const targetPath = builtPath;
+    const segmentButton = document.createElement("button");
+    segmentButton.textContent = segment;
+    segmentButton.addEventListener("click", () => {
+      currentPath = targetPath;
+      renderFileBrowser();
+    });
+    breadcrumb.appendChild(segmentButton);
+  });
+}
+
+function getCurrentLevelEntries() {
+  const prefix = currentPath ? `${currentPath}/` : "";
+  const folders = new Map();
+  const files = [];
+
+  allFiles.forEach((file) => {
+    if (!file.path.startsWith(prefix)) return;
+
+    const remainder = file.path.slice(prefix.length);
+    if (!remainder) return;
+
+    const slashIndex = remainder.indexOf("/");
+
+    if (slashIndex === -1) {
+      files.push({ name: remainder, path: file.path });
+    } else {
+      const folderName = remainder.slice(0, slashIndex);
+      folders.set(folderName, `${prefix}${folderName}`);
+    }
+  });
+
+  const folderEntries = Array.from(folders.entries())
+    .sort((a, b) => a[0].localeCompare(b[0]))
+    .map(([name, path]) => ({ type: "folder", name, path }));
+
+  const fileEntries = files
+    .filter((file) => file.name !== ".gitkeep")
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .map((file) => ({ type: "file", name: file.name, path: file.path }));
+
+  return [...folderEntries, ...fileEntries];
+}
+
+function renderFileBrowser() {
+  renderBreadcrumb();
   fileList.innerHTML = "";
 
-  files.forEach((file) => {
+  const entries = getCurrentLevelEntries();
+
+  if (entries.length === 0) {
+    fileList.innerHTML = '<p class="comment-empty">Folder ini kosong.</p>';
+    return;
+  }
+
+  entries.forEach((entry) => {
     const row = document.createElement("div");
     row.className = "file-row";
 
+    const icon = entry.type === "folder" ? folderIconSvg : fileIconSvg;
+
     row.innerHTML = `
-      <button class="file-path">${file.path}</button>
-      <button class="file-delete" aria-label="Hapus file">
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6"/></svg>
+      <button class="file-path"><span class="row-icon">${icon}</span>${entry.name}</button>
+      <button class="file-delete" aria-label="Hapus ${entry.type === "folder" ? "folder" : "file"}">
+        ${trashIconSvg}
       </button>
     `;
 
-    row.querySelector(".file-path").addEventListener("click", () => openFile(file.path));
-    row.querySelector(".file-delete").addEventListener("click", () => deleteFileAt(file.path));
+    row.querySelector(".file-path").addEventListener("click", () => {
+      if (entry.type === "folder") {
+        currentPath = entry.path;
+        renderFileBrowser();
+      } else {
+        openFile(entry.path);
+      }
+    });
+
+    row.querySelector(".file-delete").addEventListener("click", () => {
+      if (entry.type === "folder") {
+        deleteFolderAt(entry.path);
+      } else {
+        deleteFileAt(entry.path);
+      }
+    });
 
     fileList.appendChild(row);
   });
@@ -79,7 +190,8 @@ function renderFileList(files) {
 async function loadFileList() {
   try {
     const data = await apiRequest("/api/repo/tree");
-    renderFileList(data.files);
+    allFiles = data.files;
+    renderFileBrowser();
   } catch (error) {
     showMessage(error.message, "is-error");
   }
@@ -120,22 +232,24 @@ async function deleteFileAt(path) {
 }
 
 newFileButton.addEventListener("click", () => {
-  const path = window.prompt("Path file baru (contoh: blog/index.html):");
-  if (!path) return;
+  const prefix = currentPath ? `${currentPath}/` : "";
+  const name = window.prompt("Nama file baru:", prefix);
+  if (!name) return;
 
-  setCurrentFile(path, null);
+  setCurrentFile(name, null);
   editorTextarea.value = "";
   editorTextarea.focus();
 });
 
 newFolderButton.addEventListener("click", async () => {
-  const path = window.prompt("Nama folder baru (contoh: blog):");
-  if (!path) return;
+  const prefix = currentPath ? `${currentPath}/` : "";
+  const name = window.prompt("Nama folder baru:", prefix);
+  if (!name) return;
 
   try {
     await apiRequest("/api/repo/folder", {
       method: "POST",
-      body: JSON.stringify({ path })
+      body: JSON.stringify({ path: name })
     });
 
     showMessage("Folder berhasil dibuat.", "is-success");
@@ -145,10 +259,7 @@ newFolderButton.addEventListener("click", async () => {
   }
 });
 
-deleteFolderButton.addEventListener("click", async () => {
-  const path = window.prompt("Path folder yang mau dihapus (contoh: blog):");
-  if (!path) return;
-
+async function deleteFolderAt(path) {
   if (!window.confirm(`Hapus folder "${path}" beserta semua isinya?`)) return;
 
   try {
@@ -158,11 +269,16 @@ deleteFolderButton.addEventListener("click", async () => {
     });
 
     showMessage(`Folder dihapus, ${data.filesRemoved} file ikut terhapus.`, "is-success");
+
+    if (currentPath === path || currentPath.startsWith(`${path}/`)) {
+      currentPath = path.split("/").slice(0, -1).join("/");
+    }
+
     loadFileList();
   } catch (error) {
     showMessage(error.message, "is-error");
   }
-});
+}
 
 saveFileButton.addEventListener("click", async () => {
   if (!currentFile) return;
@@ -218,9 +334,13 @@ async function loadWorksList() {
         </button>
       `;
 
+      const sizeLabel = work.iframe_width || work.iframe_height
+        ? ` · ${work.iframe_width || "auto"}×${work.iframe_height || "auto"}`
+        : "";
+
       row.querySelector(".work-title").textContent = work.title;
       row.querySelector(".work-path").textContent =
-        `${work.path} · ${work.display_mode === "banner" ? "banner" : "klik"}`;
+        `${work.path} · ${work.display_mode === "banner" ? "banner" : "klik"}${sizeLabel}`;
 
       row.querySelector(".file-delete").addEventListener("click", async () => {
         if (!window.confirm(`Hapus karya "${work.title}" dari beranda?`)) return;
@@ -256,8 +376,18 @@ addWorkButton.addEventListener("click", async () => {
 
   const displayMode = modeInput.startsWith("banner") ? "banner" : "click";
 
+  const iframeWidth = window.prompt(
+    "Lebar iframe custom (contoh: 600px, 100%; kosongkan untuk default):",
+    ""
+  ) || "";
+
+  const iframeHeight = window.prompt(
+    "Tinggi iframe custom (contoh: 500px; kosongkan untuk default):",
+    ""
+  ) || "";
+
   try {
-    await addWork(title, path, description, displayMode);
+    await addWork(title, path, description, displayMode, iframeWidth, iframeHeight);
     showMessage("Karya ditambahkan ke beranda.", "is-success");
     loadWorksList();
   } catch (error) {
