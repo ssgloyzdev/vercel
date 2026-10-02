@@ -219,7 +219,8 @@ async function loadWorksList() {
       `;
 
       row.querySelector(".work-title").textContent = work.title;
-      row.querySelector(".work-path").textContent = `/${work.path}`;
+      row.querySelector(".work-path").textContent =
+        `${work.path} · ${work.display_mode === "banner" ? "banner" : "klik"}`;
 
       row.querySelector(".file-delete").addEventListener("click", async () => {
         if (!window.confirm(`Hapus karya "${work.title}" dari beranda?`)) return;
@@ -249,8 +250,14 @@ addWorkButton.addEventListener("click", async () => {
 
   const description = window.prompt("Deskripsi singkat (boleh kosong):") || "";
 
+  const modeInput = (
+    window.prompt('Tampilkan sebagai "klik" (kartu, buka pas diklik) atau "banner" (langsung tampil)?', "klik") || ""
+  ).trim().toLowerCase();
+
+  const displayMode = modeInput.startsWith("banner") ? "banner" : "click";
+
   try {
-    await addWork(title, path, description);
+    await addWork(title, path, description, displayMode);
     showMessage("Karya ditambahkan ke beranda.", "is-success");
     loadWorksList();
   } catch (error) {
