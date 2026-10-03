@@ -152,6 +152,26 @@ body {
   background: #f3f4f6;
 }
 
+.btn-logout {
+  width: 100%;
+  height: 42px;
+  margin-top: 4px;
+
+  border: 1px solid #fecaca;
+  border-radius: 10px;
+  background: #fef2f2;
+  color: #dc2626;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.btn-logout:hover {
+  background: #fee2e2;
+}
+
 .field-hint {
   font-size: 13px;
   min-height: 16px;
