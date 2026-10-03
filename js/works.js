@@ -28,6 +28,33 @@ export async function addWork(title, path, description, displayMode, iframeWidth
   return data;
 }
 
+export async function updateWork(id, fields) {
+  const { data, error } = await supabase
+    .from("works")
+    .update(fields)
+    .eq("id", id)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
+export async function updateWorkSize(id, iframeWidth, iframeHeight) {
+  const { data, error } = await supabase
+    .from("works")
+    .update({
+      iframe_width: iframeWidth || null,
+      iframe_height: iframeHeight || null
+    })
+    .eq("id", id)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
 export async function deleteWork(id) {
   const { error } = await supabase.from("works").delete().eq("id", id);
   if (error) throw error;
