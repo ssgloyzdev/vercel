@@ -1,5 +1,5 @@
 import { getSession, getUserRole } from "./auth.js";
-import { fetchWorks, addWork, deleteWork } from "./works.js";
+import { fetchWorks, addWork, deleteWork, updateWorkSize } from "./works.js";
 
 const HOME_URL = "../index.html";
 
@@ -329,6 +329,9 @@ async function loadWorksList() {
           <span class="work-title"></span>
           <span class="work-path"></span>
         </div>
+        <button class="file-resize" aria-label="Ubah ukuran iframe">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 3 14 10M21 3v6M21 3h-6M3 21l7-7M3 21v-6M3 21h6"/></svg>
+        </button>
         <button class="file-delete" aria-label="Hapus karya">
           <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6"/></svg>
         </button>
@@ -336,11 +339,33 @@ async function loadWorksList() {
 
       const sizeLabel = work.iframe_width || work.iframe_height
         ? ` · ${work.iframe_width || "auto"}×${work.iframe_height || "auto"}`
-        : "";
+        : " · ukuran default";
 
       row.querySelector(".work-title").textContent = work.title;
       row.querySelector(".work-path").textContent =
         `${work.path} · ${work.display_mode === "banner" ? "banner" : "klik"}${sizeLabel}`;
+
+      row.querySelector(".file-resize").addEventListener("click", async () => {
+        const width = window.prompt(
+          "Lebar iframe (contoh: 600px, 100%; kosongkan untuk default):",
+          work.iframe_width || ""
+        );
+        if (width === null) return;
+
+        const height = window.prompt(
+          "Tinggi iframe (contoh: 500px; kosongkan untuk default):",
+          work.iframe_height || ""
+        );
+        if (height === null) return;
+
+        try {
+          await updateWorkSize(work.id, width.trim(), height.trim());
+          showMessage("Ukuran iframe diperbarui.", "is-success");
+          loadWorksList();
+        } catch (error) {
+          showMessage(error.message, "is-error");
+        }
+      });
 
       row.querySelector(".file-delete").addEventListener("click", async () => {
         if (!window.confirm(`Hapus karya "${work.title}" dari beranda?`)) return;
