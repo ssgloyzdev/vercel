@@ -4,7 +4,8 @@ import {
   getUserRole,
   maskEmail,
   resolveAvatarUrl,
-  updateCustomAvatar
+  updateCustomAvatar,
+  logout
 } from "./auth.js";
 
 import { fetchComments, addComment, subscribeToComments } from "./comments.js";
@@ -34,6 +35,7 @@ const avatarUrlInput = document.getElementById("avatarUrlInput");
 const saveAvatarButton = document.getElementById("saveAvatarButton");
 const resetAvatarButton = document.getElementById("resetAvatarButton");
 const accountMessage = document.getElementById("accountMessage");
+const logoutButton = document.getElementById("logoutButton");
 
 const floatingWidget = document.getElementById("floatingWidget");
 const widgetToggle = document.getElementById("widgetToggle");
@@ -336,6 +338,17 @@ saveAvatarButton.addEventListener("click", async () => {
   } catch (error) {
     console.error(error);
     showAccountMessage("Gagal menyimpan foto profil.", "is-error");
+  }
+});
+
+logoutButton.addEventListener("click", async () => {
+  try {
+    await logout();
+    toggleAccountModal(false);
+    window.location.reload();
+  } catch (error) {
+    console.error(error);
+    showAccountMessage("Gagal keluar.", "is-error");
   }
 });
 
