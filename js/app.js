@@ -5,7 +5,11 @@ import {
   maskEmail,
   resolveAvatarUrl,
   updateCustomAvatar,
-  logout
+  logout,
+  fetchAuthSettings,
+  updateAuthSetting,
+  fetchAllUserRoles,
+  updateUserRole
 } from "./auth.js";
 
 import { fetchComments, addComment, subscribeToComments } from "./comments.js";
@@ -36,6 +40,25 @@ const saveAvatarButton = document.getElementById("saveAvatarButton");
 const resetAvatarButton = document.getElementById("resetAvatarButton");
 const accountMessage = document.getElementById("accountMessage");
 const logoutButton = document.getElementById("logoutButton");
+
+const authMethodsItem = document.getElementById("authMethodsItem");
+const authMethodsModal = document.getElementById("authMethodsModal");
+const closeAuthMethodsModal = document.getElementById("closeAuthMethodsModal");
+const authMethodsList = document.getElementById("authMethodsList");
+const authMethodsMessage = document.getElementById("authMethodsMessage");
+
+const manageUsersItem = document.getElementById("manageUsersItem");
+const manageUsersModal = document.getElementById("manageUsersModal");
+const closeManageUsersModal = document.getElementById("closeManageUsersModal");
+const userList = document.getElementById("userList");
+const userListMessage = document.getElementById("userListMessage");
+
+const METHOD_LABELS = {
+  password: "Email & Password",
+  magic_link: "Magic Link",
+  google: "Google",
+  github: "GitHub"
+};
 
 const floatingWidget = document.getElementById("floatingWidget");
 const widgetToggle = document.getElementById("widgetToggle");
@@ -68,6 +91,130 @@ function toggleDrawer(open) {
 function toggleAccountModal(open) {
   accountModal.hidden = !open;
   overlay.classList.toggle("is-visible", open);
+}
+
+function toggleAuthMethodsModal(open) {
+  authMethodsModal.hidden = !open;
+  overlay.classList.toggle("is-visible", open);
+  if (open) loadAuthMethods();
+}
+
+function toggleManageUsersModal(open) {
+  manageUsersModal.hidden = !open;
+  overlay.classList.toggle("is-visible", open);
+  if (open) loadUserList();
+}
+
+async function loadAuthMethods() {
+  authMethodsMessage.textContent = "";
+  authMethodsList.innerHTML = '<p class="field-hint">Memuat...</p>';
+
+  try {
+    const settings = await fetchAuthSettings();
+    authMethodsList.innerHTML = "";
+
+    settings.forEach((item) => {
+      const row = document.createElement("div");
+      row.className = "toggle-row";
+
+      const label = document.createElement("span");
+      label.textContent = item.label || METHOD_LABELS[item.method] || item.method;
+
+      const toggle = document.createElement("button");
+      toggle.className = `toggle${item.enabled ? " is-on" : ""}`;
+      toggle.setAttribute("role", "switch");
+      toggle.setAttribute("aria-checked", String(item.enabled));
+
+      toggle.addEventListener("click", async () => {
+        const nextEnabled = !toggle.classList.contains("is-on");
+
+        try {
+          await updateAuthSetting(item.method, nextEnabled);
+          toggle.classList.toggle("is-on", nextEnabled);
+          toggle.setAttribute("aria-checked", String(nextEnabled));
+          authMethodsMessage.textContent = "";
+        } catch (error) {
+          console.error(error);
+          authMethodsMessage.textContent = "Minimal satu metode login harus tetap aktif.";
+          authMethodsMessage.className = "field-hint is-error";
+        }
+      });
+
+      row.append(label, toggle);
+      authMethodsList.appendChild(row);
+    });
+  } catch (error) {
+    console.error(error);
+    authMethodsList.innerHTML = '<p class="field-hint is-error">Gagal memuat pengaturan.</p>';
+  }
+}
+
+async function loadUserList() {
+  userListMessage.textContent = "";
+  userList.innerHTML = '<p class="field-hint">Memuat...</p>';
+
+  try {
+    const rows = await fetchAllUserRoles();
+    userList.innerHTML = "";
+
+    if (rows.length === 0) {
+      userList.innerHTML = '<p class="field-hint">Belum ada pengguna.</p>';
+      return;
+    }
+
+    rows.forEach((row) => {
+      const item = document.createElement("div");
+      item.className = `user-row role-${row.role}`;
+
+      const info = document.createElement("div");
+      info.className = "user-row-info";
+
+      const emailSpan = document.createElement("span");
+      emailSpan.className = "user-row-email";
+      emailSpan.textContent =
+        currentSession && currentSession.user.email === row.email
+          ? `${maskEmail(row.email)} (Anda)`
+          : maskEmail(row.email);
+
+      const badge = document.createElement("span");
+      badge.className = `role-badge role-badge-${row.role}`;
+      badge.textContent = row.role === "admin" ? "Admin" : "Pengguna";
+
+      info.append(emailSpan, badge);
+
+      const select = document.createElement("select");
+      select.className = "role-select";
+      select.innerHTML = `
+        <option value="user">Pengguna</option>
+        <option value="admin">Admin</option>
+      `;
+      select.value = row.role;
+
+      select.addEventListener("change", async () => {
+        const newRole = select.value;
+
+        try {
+          await updateUserRole(row.email, newRole);
+          item.className = `user-row role-${newRole}`;
+          badge.className = `role-badge role-badge-${newRole}`;
+          badge.textContent = newRole === "admin" ? "Admin" : "Pengguna";
+          userListMessage.textContent = "Role diperbarui.";
+          userListMessage.className = "field-hint is-success";
+        } catch (error) {
+          console.error(error);
+          select.value = row.role;
+          userListMessage.textContent = "Gagal mengubah role (minimal harus ada satu admin).";
+          userListMessage.className = "field-hint is-error";
+        }
+      });
+
+      item.append(info, select);
+      userList.appendChild(item);
+    });
+  } catch (error) {
+    console.error(error);
+    userList.innerHTML = '<p class="field-hint is-error">Gagal memuat daftar pengguna.</p>';
+  }
 }
 
 function goToLogin() {
@@ -319,15 +466,13 @@ loginButton.addEventListener("click", goToLogin);
 overlay.addEventListener("click", () => {
   toggleDrawer(false);
   toggleAccountModal(false);
+  toggleAuthMethodsModal(false);
+  toggleManageUsersModal(false);
   closeWorkPreview();
 });
 
-document.querySelectorAll(".toggle").forEach((toggle) => {
-  toggle.addEventListener("click", () => {
-    const isOn = toggle.classList.toggle("is-on");
-    toggle.setAttribute("aria-checked", isOn);
-  });
-});
+closeAuthMethodsModal.addEventListener("click", () => toggleAuthMethodsModal(false));
+closeManageUsersModal.addEventListener("click", () => toggleManageUsersModal(false));
 
 saveAvatarButton.addEventListener("click", async () => {
   try {
@@ -393,6 +538,16 @@ async function renderAuthState(session) {
       window.location.href = "admin/kelola-konten.html";
     };
   }
+
+  authMethodsItem.onclick = () => {
+    toggleDrawer(false);
+    toggleAuthMethodsModal(true);
+  };
+
+  manageUsersItem.onclick = () => {
+    toggleDrawer(false);
+    toggleManageUsersModal(true);
+  };
 }
 
 function resolveWorkUrl(path) {
