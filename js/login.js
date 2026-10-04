@@ -3,7 +3,8 @@ import {
   loginWithGoogle,
   loginWithGitHub,
   loginWithMagicLink,
-  getSession
+  getSession,
+  fetchAuthSettings
 } from "./auth.js";
 
 const HOME_URL = "../index.html";
@@ -11,11 +12,38 @@ const HOME_URL = "../index.html";
 const loginForm = document.getElementById("loginForm");
 const emailInput = document.getElementById("email");
 const passwordInput = document.getElementById("password");
+const passwordGroup = document.getElementById("passwordGroup");
 const loginButton = document.getElementById("loginButton");
 const googleButton = document.getElementById("googleButton");
 const githubButton = document.getElementById("githubButton");
 const magicLinkButton = document.getElementById("magicLinkButton");
+const magicLinkText = document.querySelector(".magic-link-text");
+const divider = document.querySelector(".divider");
+const oauthButtons = document.querySelector(".oauth-buttons");
 const message = document.getElementById("message");
+
+let authMethods = { password: true, magic_link: true, google: true, github: true };
+
+async function applyAuthMethods() {
+  try {
+    const settings = await fetchAuthSettings();
+    settings.forEach((item) => {
+      authMethods[item.method] = item.enabled;
+    });
+  } catch (error) {
+    console.error(error);
+  }
+
+  passwordGroup.hidden = !authMethods.password;
+  loginButton.hidden = !authMethods.password;
+  magicLinkText.hidden = !authMethods.magic_link;
+  googleButton.hidden = !authMethods.google;
+  githubButton.hidden = !authMethods.github;
+
+  const noOauth = !authMethods.google && !authMethods.github;
+  divider.hidden = noOauth;
+  oauthButtons.hidden = noOauth;
+}
 
 function showMessage(text, type = "error") {
   message.textContent = text;
@@ -35,6 +63,11 @@ function setLoading(button, loading, text) {
 
 loginForm.addEventListener("submit", async (event) => {
   event.preventDefault();
+
+  if (!authMethods.password) {
+    showMessage("Login dengan email & password sedang dinonaktifkan.");
+    return;
+  }
 
   const email = emailInput.value.trim();
   const password = passwordInput.value;
@@ -105,4 +138,5 @@ async function checkSession() {
   }
 }
 
+applyAuthMethods();
 checkSession();
