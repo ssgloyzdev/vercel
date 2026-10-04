@@ -136,6 +136,11 @@ body {
   background: #4338ca;
 }
 
+.divider[hidden],
+.oauth-buttons[hidden] {
+  display: none;
+}
+
 .divider {
   display: flex;
   align-items: center;
