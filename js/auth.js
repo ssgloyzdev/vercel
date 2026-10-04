@@ -104,6 +104,50 @@ export async function getUserRole(email) {
   return data.role;
 }
 
+export async function fetchAllUserRoles() {
+  const { data, error } = await supabase
+    .from("user_roles")
+    .select("email, role, created_at")
+    .order("created_at", { ascending: false });
+
+  if (error) throw error;
+  return data;
+}
+
+export async function updateUserRole(email, role) {
+  const { data, error } = await supabase
+    .from("user_roles")
+    .update({ role })
+    .eq("email", email)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
+export async function fetchAuthSettings() {
+  const { data, error } = await supabase
+    .from("auth_settings")
+    .select("method, label, enabled")
+    .order("method", { ascending: true });
+
+  if (error) throw error;
+  return data;
+}
+
+export async function updateAuthSetting(method, enabled) {
+  const { data, error } = await supabase
+    .from("auth_settings")
+    .update({ enabled })
+    .eq("method", method)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
 export function maskEmail(email) {
   if (!email) return "";
 
