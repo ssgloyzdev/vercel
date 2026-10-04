@@ -1,10 +1,13 @@
 import {
   register,
   loginWithGoogle,
-  loginWithGitHub
+  loginWithGitHub,
+  fetchAuthSettings
 } from "./auth.js";
 
-const form = document.querySelector("#registerForm");
+const HOME_URL = "../index.html";
+
+const registerForm = document.querySelector("#registerForm");
 
 const email = document.querySelector("#email");
 const password = document.querySelector("#password");
@@ -13,15 +16,47 @@ const confirmPassword = document.querySelector("#confirmPassword");
 const registerButton = document.querySelector("#registerButton");
 const googleButton = document.querySelector("#googleButton");
 const githubButton = document.querySelector("#githubButton");
+const divider = document.querySelector(".divider");
+const oauthButtons = document.querySelector(".oauth-buttons");
 
 const message = document.querySelector("#message");
+
+let authMethods = { password: true, magic_link: true, google: true, github: true };
 
 function showMessage(text, type = "error") {
   message.textContent = text;
   message.className = `message ${type}`;
 }
 
+async function applyAuthMethods() {
+  try {
+    const settings = await fetchAuthSettings();
+    settings.forEach((item) => {
+      authMethods[item.method] = item.enabled;
+    });
+  } catch (error) {
+    console.error(error);
+  }
+
+  registerForm.hidden = !authMethods.password;
+  googleButton.hidden = !authMethods.google;
+  githubButton.hidden = !authMethods.github;
+
+  const noOauth = !authMethods.google && !authMethods.github;
+  divider.hidden = noOauth;
+  oauthButtons.hidden = noOauth;
+
+  if (!authMethods.password && noOauth) {
+    showMessage("Pendaftaran akun baru sedang dinonaktifkan.");
+  }
+}
+
 async function handleRegister() {
+  if (!authMethods.password) {
+    showMessage("Pendaftaran dengan email & password sedang dinonaktifkan.");
+    return;
+  }
+
   const emailValue = email.value.trim();
   const passwordValue = password.value;
   const confirmPasswordValue = confirmPassword.value;
@@ -56,7 +91,7 @@ async function handleRegister() {
         "success"
       );
     } else {
-      window.location.href = "../index.html";
+      window.location.href = HOME_URL;
     }
   } catch (error) {
     showMessage(error.message);
@@ -94,7 +129,7 @@ async function handleGitHubRegister() {
   }
 }
 
-form.addEventListener("submit", (event) => {
+registerForm.addEventListener("submit", (event) => {
   event.preventDefault();
   handleRegister();
 });
@@ -108,3 +143,5 @@ githubButton.addEventListener(
   "click",
   handleGitHubRegister
 );
+
+applyAuthMethods();
